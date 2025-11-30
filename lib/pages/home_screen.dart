@@ -9,6 +9,7 @@ import '../widgets/product_card.dart';
 import '../pages/product_details_page.dart';
 import '../pages/shop_by_categories_page.dart';
 import '../pages/category_products_page.dart';
+import '../pages/search_page.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -113,20 +114,34 @@ class _HomeScreenState extends State<HomeScreen> {
                       horizontal: 16.0,
                       vertical: 16.0,
                     ),
-                    child: TextField(
-                      decoration: InputDecoration(
-                        hintText: 'Search',
-                        prefixIcon: const Icon(
-                          Icons.search,
-                          color: Colors.black54,
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const SearchPage(),
+                          ),
+                        );
+                      },
+                      child: AbsorbPointer(
+                        child: TextField(
+                          decoration: InputDecoration(
+                            hintText: 'Search',
+                            prefixIcon: const Icon(
+                              Icons.search,
+                              color: Colors.black54,
+                            ),
+                            filled: true,
+                            fillColor: const Color(0xFFF4F4F4),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30),
+                              borderSide: BorderSide.none,
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                              vertical: 0,
+                            ),
+                          ),
                         ),
-                        filled: true,
-                        fillColor: const Color(0xFFF4F4F4),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide: BorderSide.none,
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(vertical: 0),
                       ),
                     ),
                   ),

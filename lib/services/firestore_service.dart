@@ -51,6 +51,69 @@ class FirestoreService {
         });
   }
 
+  Future<List<Product>> searchProducts({
+    String? query,
+    String? category,
+    double? minPrice,
+    double? maxPrice,
+    String? gender,
+    String sortBy =
+        'recommended', // 'recommended', 'newest', 'priceLowHigh', 'priceHighLow'
+  }) async {
+    // Fetch all products
+    final snapshot = await _db.collection('products').get();
+    List<Product> products = snapshot.docs
+        .map((doc) => Product.fromMap(doc.data(), doc.id))
+        .toList();
+
+    // Filter by query (title contains)
+    if (query != null && query.isNotEmpty) {
+      products = products
+          .where((p) => p.title.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    }
+
+    // Filter by category
+    if (category != null && category.isNotEmpty) {
+      products = products.where((p) => p.category == category).toList();
+    }
+
+    // Filter by gender
+    if (gender != null && gender.isNotEmpty) {
+      products = products
+          .where((p) => p.gender == gender || p.gender == 'Unisex')
+          .toList();
+    }
+
+    // Filter by price range
+    if (minPrice != null) {
+      products = products.where((p) => p.price >= minPrice).toList();
+    }
+    if (maxPrice != null) {
+      products = products.where((p) => p.price <= maxPrice).toList();
+    }
+
+    // Sort
+    switch (sortBy) {
+      case 'newest':
+        products = products.where((p) => p.isNewIn).toList();
+        break;
+      case 'priceLowHigh':
+        products.sort((a, b) => a.price.compareTo(b.price));
+        break;
+      case 'priceHighLow':
+        products.sort((a, b) => b.price.compareTo(a.price));
+        break;
+      case 'recommended':
+      default:
+        // Keep original order or sort by rating
+        products.sort((a, b) => b.rating.compareTo(a.rating));
+        break;
+    }
+
+    return products;
+  }
+
   // Categories
   Stream<List<Category>> getCategories() {
     return _db.collection('categories').snapshots().map((snapshot) {

@@ -8,6 +8,7 @@ class Product {
   final double rating;
   final bool isTopSelling;
   final bool isNewIn;
+  final String gender; // 'Men', 'Women', 'Kids', 'Unisex'
 
   Product({
     required this.id,
@@ -19,6 +20,7 @@ class Product {
     this.rating = 0.0,
     this.isTopSelling = false,
     this.isNewIn = false,
+    this.gender = 'Unisex',
   });
 
   factory Product.fromMap(Map<String, dynamic> data, String id) {
@@ -34,6 +36,7 @@ class Product {
       rating: (data['rating'] ?? 0).toDouble(),
       isTopSelling: data['isTopSelling'] ?? false,
       isNewIn: data['isNewIn'] ?? false,
+      gender: data['gender'] ?? 'Unisex',
     );
   }
 
@@ -47,6 +50,7 @@ class Product {
       'rating': rating,
       'isTopSelling': isTopSelling,
       'isNewIn': isNewIn,
+      'gender': gender,
     };
   }
 }

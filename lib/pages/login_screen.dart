@@ -1,8 +1,7 @@
-
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ecommerce/services/auth_service.dart';
-import 'package:ecommerce/pages/home_screen.dart';
+import 'package:ecommerce/pages/main_navigation_wrapper.dart';
 import 'package:ecommerce/routes/app_routes.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -36,17 +35,20 @@ class _LoginScreenState extends State<LoginScreen> {
       });
 
       try {
-        UserCredential? userCredential = await _authService.signInWithEmailPassword(
-          email: _emailController.text,
-          password: _passwordController.text,
-        );
+        UserCredential? userCredential = await _authService
+            .signInWithEmailPassword(
+              email: _emailController.text,
+              password: _passwordController.text,
+            );
 
         if (userCredential != null && mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Login successful!')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('Login successful!')));
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => const HomeScreen()),
+            MaterialPageRoute(
+              builder: (context) => const MainNavigationWrapper(),
+            ),
           );
         }
       } on FirebaseAuthException catch (e) {
@@ -66,7 +68,8 @@ class _LoginScreenState extends State<LoginScreen> {
         });
       } catch (e) {
         setState(() {
-          _errorMessage = 'An unexpected error occurred. Please try again later.';
+          _errorMessage =
+              'An unexpected error occurred. Please try again later.';
         });
       }
       if (mounted) {
@@ -87,9 +90,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Login'),
-      ),
+      appBar: AppBar(title: const Text('Login')),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 30.0),
@@ -102,9 +103,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 Text(
                   'Welcome Back!',
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).primaryColor,
-                      ),
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).primaryColor,
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 35),
@@ -120,7 +121,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your email';
                     }
-                    if (!RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$').hasMatch(value)) {
+                    if (!RegExp(
+                      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+                    ).hasMatch(value)) {
                       return 'Please enter a valid email address';
                     }
                     return null;
@@ -135,7 +138,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     prefixIcon: const Icon(Icons.lock_outline),
                     border: const OutlineInputBorder(),
                     suffixIcon: IconButton(
-                      icon: Icon(_isPasswordObscured ? Icons.visibility_off_outlined : Icons.visibility_outlined),
+                      icon: Icon(
+                        _isPasswordObscured
+                            ? Icons.visibility_off_outlined
+                            : Icons.visibility_outlined,
+                      ),
                       onPressed: () {
                         setState(() {
                           _isPasswordObscured = !_isPasswordObscured;
@@ -166,7 +173,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     padding: const EdgeInsets.only(bottom: 16.0),
                     child: Text(
                       _errorMessage!,
-                      style: const TextStyle(color: Colors.red, fontWeight: FontWeight.w500),
+                      style: const TextStyle(
+                        color: Colors.red,
+                        fontWeight: FontWeight.w500,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -175,7 +185,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     : ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 16.0),
-                          textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          textStyle: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
                           backgroundColor: Theme.of(context).primaryColor,
                           foregroundColor: Colors.white,
                         ),

@@ -1,4 +1,3 @@
-
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthService {
@@ -7,6 +6,7 @@ class AuthService {
   AuthService(this._firebaseAuth);
 
   Stream<User?> get authStateChanges => _firebaseAuth.authStateChanges();
+  Stream<User?> get userChanges => _firebaseAuth.userChanges();
 
   User? get currentUser => _firebaseAuth.currentUser;
 
@@ -24,10 +24,11 @@ class AuthService {
     required String password,
   }) async {
     try {
-      final UserCredential userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
-        email: email.trim(),
-        password: password.trim(),
-      );
+      final UserCredential userCredential = await _firebaseAuth
+          .createUserWithEmailAndPassword(
+            email: email.trim(),
+            password: password.trim(),
+          );
       return userCredential;
     } on FirebaseAuthException {
       rethrow;
@@ -41,10 +42,11 @@ class AuthService {
     required String password,
   }) async {
     try {
-      final UserCredential userCredential = await _firebaseAuth.signInWithEmailAndPassword(
-        email: email.trim(),
-        password: password.trim(),
-      );
+      final UserCredential userCredential = await _firebaseAuth
+          .signInWithEmailAndPassword(
+            email: email.trim(),
+            password: password.trim(),
+          );
       return userCredential;
     } on FirebaseAuthException {
       rethrow;

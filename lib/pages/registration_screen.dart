@@ -1,8 +1,7 @@
-
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ecommerce/services/auth_service.dart';
-import 'package:ecommerce/pages/home_screen.dart';
+import 'package:ecommerce/pages/main_navigation_wrapper.dart';
 
 import '../routes/app_routes.dart';
 
@@ -17,7 +16,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
 
   late final AuthService _authService;
   bool _isLoading = false;
@@ -39,20 +39,27 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       });
 
       try {
-        UserCredential? userCredential = await _authService.signUpWithEmailPassword(
-          email: _emailController.text,
-          password: _passwordController.text,
-        );
+        UserCredential? userCredential = await _authService
+            .signUpWithEmailPassword(
+              email: _emailController.text,
+              password: _passwordController.text,
+            );
 
         if (userCredential != null) {
           await _authService.sendVerificationEmail();
 
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Registration successful! A verification email has been sent.')),
+              const SnackBar(
+                content: Text(
+                  'Registration successful! A verification email has been sent.',
+                ),
+              ),
             );
             Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => const HomeScreen()),
+              MaterialPageRoute(
+                builder: (context) => const MainNavigationWrapper(),
+              ),
             );
           }
         }
@@ -76,7 +83,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         });
       } catch (e) {
         setState(() {
-          _errorMessage = 'An unexpected error occurred. Please try again later.';
+          _errorMessage =
+              'An unexpected error occurred. Please try again later.';
         });
       }
       if (mounted) {
@@ -98,9 +106,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Register'),
-      ),
+      appBar: AppBar(title: const Text('Register')),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 30.0),
@@ -113,9 +119,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 Text(
                   'Create Your Account',
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).primaryColor,
-                      ),
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).primaryColor,
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 35),
@@ -131,7 +137,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your email';
                     }
-                    if (!RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$').hasMatch(value)) {
+                    if (!RegExp(
+                      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+                    ).hasMatch(value)) {
                       return 'Please enter a valid email address';
                     }
                     return null;
@@ -146,7 +154,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     prefixIcon: const Icon(Icons.lock_outline),
                     border: const OutlineInputBorder(),
                     suffixIcon: IconButton(
-                      icon: Icon(_isPasswordObscured ? Icons.visibility_off_outlined : Icons.visibility_outlined),
+                      icon: Icon(
+                        _isPasswordObscured
+                            ? Icons.visibility_off_outlined
+                            : Icons.visibility_outlined,
+                      ),
                       onPressed: () {
                         setState(() {
                           _isPasswordObscured = !_isPasswordObscured;
@@ -173,10 +185,15 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     prefixIcon: const Icon(Icons.lock_reset_outlined),
                     border: const OutlineInputBorder(),
                     suffixIcon: IconButton(
-                      icon: Icon(_isConfirmPasswordObscured ? Icons.visibility_off_outlined : Icons.visibility_outlined),
+                      icon: Icon(
+                        _isConfirmPasswordObscured
+                            ? Icons.visibility_off_outlined
+                            : Icons.visibility_outlined,
+                      ),
                       onPressed: () {
                         setState(() {
-                          _isConfirmPasswordObscured = !_isConfirmPasswordObscured;
+                          _isConfirmPasswordObscured =
+                              !_isConfirmPasswordObscured;
                         });
                       },
                     ),
@@ -197,7 +214,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     padding: const EdgeInsets.only(bottom: 16.0),
                     child: Text(
                       _errorMessage!,
-                      style: const TextStyle(color: Colors.red, fontWeight: FontWeight.w500),
+                      style: const TextStyle(
+                        color: Colors.red,
+                        fontWeight: FontWeight.w500,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -206,7 +226,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     : ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 16.0),
-                          textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          textStyle: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
                           backgroundColor: Theme.of(context).primaryColor,
                           foregroundColor: Colors.white,
                         ),

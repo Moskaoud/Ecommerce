@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "605911184316",
+    "project_id": "ecommercemza",
+    "storage_bucket": "ecommercemza.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:605911184316:android:3bf36001e6cf388876b1b9",
+        "android_client_info": {
+          "package_name": "com.mza.ecommerce"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD1F8RQCDD1QWxql4CNcKFsEGSxbyTOngc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

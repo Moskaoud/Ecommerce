@@ -1,10 +1,6 @@
-
 import 'package:flutter/material.dart';
-import 'package:ecommerce/pages/firestore_example_screen.dart';
-
-import 'home_page.dart';
-import 'profile_page.dart'; // Use the new ProfilePage
-import 'settings_page.dart';
+import 'home_screen.dart';
+import 'profile_page.dart';
 
 class MainNavigationWrapper extends StatefulWidget {
   const MainNavigationWrapper({super.key});
@@ -14,92 +10,53 @@ class MainNavigationWrapper extends StatefulWidget {
 }
 
 class _MainNavigationWrapperState extends State<MainNavigationWrapper> {
-  int _selectedIndex = 0;
+  int _currentIndex = 0;
 
-  static final List<Widget> _widgetOptions = <Widget>[
-    const HomePage(),
-    const ProfilePage(), // Updated to use ProfilePage
-    const SettingsPage(),
-    const FirestoreExampleScreen(),
+  final List<Widget> _screens = [
+    const HomeScreen(),
+    const Center(child: Text('Notifications')), // Placeholder
+    const Center(child: Text('Receipts')), // Placeholder
+    const ProfilePage(),
   ];
-
-  static const List<String> _pageTitles = <String>[
-    'Home',
-    'Profile',
-    'Settings',
-    'Firestore',
-  ];
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(_pageTitles[_selectedIndex]),
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-      ),
-      body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
-      ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary,
-              ),
-              child: Text(
-                'Navigation Menu',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                  fontSize: 24,
-                ),
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.home),
-              title: const Text('Home'),
-              selected: _selectedIndex == 0,
-              onTap: () {
-                _onItemTapped(0);
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.person),
-              title: const Text('Profile'),
-              selected: _selectedIndex == 1,
-              onTap: () {
-                _onItemTapped(1);
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.settings),
-              title: const Text('Settings'),
-              selected: _selectedIndex == 2,
-              onTap: () {
-                _onItemTapped(2);
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.cloud_upload),
-              title: const Text('Firestore'),
-              selected: _selectedIndex == 3,
-              onTap: () {
-                _onItemTapped(3);
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        ),
+      body: IndexedStack(index: _currentIndex, children: _screens),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+        type: BottomNavigationBarType.fixed,
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
+        selectedItemColor: const Color(0xFF8E6CEF), // Purple from design
+        unselectedItemColor: Colors.grey,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_outlined),
+            activeIcon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.notifications_outlined),
+            activeIcon: Icon(Icons.notifications),
+            label: 'Notifications',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.receipt_long_outlined),
+            activeIcon: Icon(Icons.receipt_long),
+            label: 'Receipts',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_outline),
+            activeIcon: Icon(Icons.person),
+            label: 'Profile',
+          ),
+        ],
       ),
     );
   }

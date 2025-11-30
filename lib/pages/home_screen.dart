@@ -1,9 +1,11 @@
-
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:ecommerce/routes/app_routes.dart';
-import 'package:ecommerce/services/auth_service.dart';
+import '../services/firestore_service.dart';
+import '../services/auth_service.dart';
+import '../models/product_model.dart';
+import '../models/category_model.dart';
+import '../widgets/section_header.dart';
+import '../widgets/product_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -13,137 +15,232 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final FirestoreService _firestoreService = FirestoreService();
   final AuthService _authService = AuthService(FirebaseAuth.instance);
-  late StreamSubscription<User?> _authSubscription;
-  User? _user;
 
   @override
   void initState() {
     super.initState();
-    _user = _authService.currentUser;
-    // Listen for auth changes (login/logout) to update the state.
-    _authSubscription = _authService.authStateChanges.listen((user) {
-      if (mounted) {
-        setState(() {
-          _user = user;
-        });
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _authSubscription.cancel();
-    super.dispose();
-  }
-
-  Future<void> _navigateToProfile() async {
-    // Wait for the user to return from the profile page.
-    await Navigator.of(context).pushNamed(AppRoutes.profile);
-
-    // When the user returns, force a reload of the user data from Firebase.
-    try {
-      await _authService.reloadUser();
-      if (mounted) {
-        setState(() {
-          _user = _authService.currentUser;
-        });
-      }
-    } catch (e) {
-      // Handle error if user could not be reloaded.
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Could not refresh user data: ${e.toString()}')),
-        );
-      }
-    }
+    // Optional: Seed data if empty (for development)
+    _firestoreService.seedData();
   }
 
   @override
   Widget build(BuildContext context) {
-    final User? user = _user;
+    return StreamBuilder<User?>(
+      stream: _authService.userChanges,
+      builder: (context, snapshot) {
+        final User? user = snapshot.data;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Home'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            tooltip: 'Logout',
-            onPressed: () async {
-              await _authService.signOut();
-            },
-          )
-        ],
-      ),
-      body: user == null
-          ? const Center(child: CircularProgressIndicator())
-          : Center(
+        return Scaffold(
+          backgroundColor: Colors.white,
+          body: SafeArea(
+            child: SingleChildScrollView(
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Welcome, ${user.displayName?.isNotEmpty == true ? user.displayName : 'User'}!',
-                    style: Theme.of(context).textTheme.headlineMedium,
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    'Logged in as: ${user.email}',
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  const SizedBox(height: 20),
-                  Card(
-                    color: user.emailVerified ? Colors.green[100] : Colors.amber[100],
-                    child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            user.emailVerified ? Icons.verified_user : Icons.warning,
-                            color: user.emailVerified ? Colors.green : Colors.amber,
-                          ),
-                          const SizedBox(width: 10),
-                          Text(
-                            user.emailVerified ? 'Email is Verified' : 'Email Not Verified',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: user.emailVerified ? Colors.green[800] : Colors.amber[800],
+                  // Header
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                      vertical: 8.0,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 20,
+                              backgroundImage: user?.photoURL != null
+                                  ? NetworkImage(user!.photoURL!)
+                                  : const NetworkImage(
+                                      'https://i.pravatar.cc/150?img=11',
+                                    ), // Placeholder avatar
                             ),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Hello, ${user?.displayName?.split(' ').first ?? 'User'}',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: const BoxDecoration(
+                            color: Color(0xFF8E6CEF), // Purple
+                            shape: BoxShape.circle,
                           ),
-                        ],
+                          child: const Icon(
+                            Icons.shopping_bag_outlined,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Search Bar
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                      vertical: 16.0,
+                    ),
+                    child: TextField(
+                      decoration: InputDecoration(
+                        hintText: 'Search',
+                        prefixIcon: const Icon(
+                          Icons.search,
+                          color: Colors.black54,
+                        ),
+                        filled: true,
+                        fillColor: const Color(0xFFF4F4F4),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: BorderSide.none,
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(vertical: 0),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  if (!user.emailVerified)
-                    ElevatedButton(
-                      onPressed: () async {
-                        try {
-                          await _authService.sendVerificationEmail();
-                          if (mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Verification email sent!')),
-                            );
-                          }
-                        } catch (e) {
-                          if (mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(e.toString())),
-                            );
-                          }
+
+                  // Categories
+                  SectionHeader(title: 'Categories', onSeeAll: () {}),
+                  SizedBox(
+                    height: 90,
+                    child: StreamBuilder<List<Category>>(
+                      stream: _firestoreService.getCategories(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
                         }
+                        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                          return const SizedBox();
+                        }
+                        final categories = snapshot.data!;
+                        return ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          itemCount: categories.length,
+                          itemBuilder: (context, index) {
+                            final category = categories[index];
+                            return Padding(
+                              padding: const EdgeInsets.only(right: 16.0),
+                              child: Column(
+                                children: [
+                                  CircleAvatar(
+                                    radius: 30,
+                                    backgroundColor: const Color(0xFFF4F4F4),
+                                    backgroundImage: NetworkImage(
+                                      category.iconUrl,
+                                    ),
+                                    onBackgroundImageError: (_, __) =>
+                                        const Icon(Icons.category),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    category.title,
+                                    style: const TextStyle(fontSize: 12),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        );
                       },
-                      child: const Text('Resend Verification Email'),
                     ),
-                  const SizedBox(height: 10),
-                  ElevatedButton(
-                    onPressed: _navigateToProfile,
-                    child: const Text('Edit Profile'),
                   ),
+
+                  // Top Selling
+                  SectionHeader(title: 'Top Selling', onSeeAll: () {}),
+                  SizedBox(
+                    height: 260, // Height for the product cards
+                    child: StreamBuilder<List<Product>>(
+                      stream: _firestoreService.getTopSellingProducts(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                          return const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16.0),
+                            child: Text("No top selling products found."),
+                          );
+                        }
+                        final products = snapshot.data!;
+                        return ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          itemCount: products.length,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: const EdgeInsets.only(right: 16.0),
+                              child: SizedBox(
+                                width: 160,
+                                child: ProductCard(product: products[index]),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ),
+
+                  // New In
+                  SectionHeader(title: 'New In', onSeeAll: () {}),
+                  SizedBox(
+                    height: 260,
+                    child: StreamBuilder<List<Product>>(
+                      stream: _firestoreService.getNewInProducts(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                          return const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16.0),
+                            child: Text("No new products found."),
+                          );
+                        }
+                        final products = snapshot.data!;
+                        return ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          itemCount: products.length,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: const EdgeInsets.only(right: 16.0),
+                              child: SizedBox(
+                                width: 160,
+                                child: ProductCard(product: products[index]),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
                 ],
               ),
             ),
+          ),
+        );
+      },
     );
   }
 }

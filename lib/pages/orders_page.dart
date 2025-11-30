@@ -3,6 +3,7 @@ import 'package:ecommerce/models/order_model.dart';
 import 'package:ecommerce/models/cart_model.dart';
 import 'package:ecommerce/models/product_model.dart';
 import 'order_details_page.dart';
+import 'shop_by_categories_page.dart';
 
 class OrdersPage extends StatefulWidget {
   const OrdersPage({super.key});
@@ -181,7 +182,12 @@ class _OrdersPageState extends State<OrdersPage>
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: () {
-              // Navigate to categories
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ShopByCategoriesPage(),
+                ),
+              );
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF8E6CEF),

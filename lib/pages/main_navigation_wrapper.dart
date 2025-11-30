@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'home_screen.dart';
+import 'home_screen.dart';
 import 'profile_page.dart';
+import 'notifications_page.dart';
+import 'orders_page.dart';
 
 class MainNavigationWrapper extends StatefulWidget {
   const MainNavigationWrapper({super.key});
@@ -14,8 +17,8 @@ class _MainNavigationWrapperState extends State<MainNavigationWrapper> {
 
   final List<Widget> _screens = [
     const HomeScreen(),
-    const Center(child: Text('Notifications')), // Placeholder
-    const Center(child: Text('Receipts')), // Placeholder
+    const NotificationsPage(),
+    const OrdersPage(),
     const ProfilePage(),
   ];
 

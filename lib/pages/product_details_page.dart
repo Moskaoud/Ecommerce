@@ -15,6 +15,7 @@ class ProductDetailsPage extends StatefulWidget {
 class _ProductDetailsPageState extends State<ProductDetailsPage> {
   String _selectedSize = 'M';
   String _selectedColor = 'Black';
+  int _quantity = 1;
 
   final List<String> _sizes = ['S', 'M', 'L', 'XL', 'XXL'];
   final List<String> _colors = [
@@ -26,20 +27,17 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
 
   void _addToCart() {
     final cart = Provider.of<CartModel>(context, listen: false);
-    cart.addItem(widget.product, _selectedSize, _selectedColor);
+    cart.addItem(widget.product, _selectedSize, _selectedColor, _quantity);
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('${widget.product.title} added to cart'),
-        duration: const Duration(seconds: 2),
-        action: SnackBarAction(
-          label: 'UNDO',
-          onPressed: () {
-            // Implement undo if needed, or just remove last item
-          },
-        ),
+        duration: const Duration(seconds: 1),
       ),
     );
+
+    // Navigate to Cart
+    Navigator.pushNamed(context, '/cart');
   }
 
   @override
@@ -198,6 +196,59 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
 
                         const SizedBox(height: 24),
 
+                        // Quantity Selector
+                        const Text(
+                          'Quantity',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFF4F4F4),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Row(
+                                children: [
+                                  IconButton(
+                                    onPressed: () {
+                                      if (_quantity > 1) {
+                                        setState(() {
+                                          _quantity--;
+                                        });
+                                      }
+                                    },
+                                    icon: const Icon(Icons.remove),
+                                    color: Colors.black,
+                                  ),
+                                  Text(
+                                    '$_quantity',
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        _quantity++;
+                                      });
+                                    },
+                                    icon: const Icon(Icons.add),
+                                    color: Colors.black,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(height: 24),
+
                         // Description
                         const Text(
                           'Description',
@@ -240,17 +291,31 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                   onPressed: _addToCart,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF8E6CEF),
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25),
+                      borderRadius: BorderRadius.circular(30),
                     ),
                   ),
-                  child: const Text(
-                    'Add to Cart',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '\$${(widget.product.price * _quantity).toStringAsFixed(2)}',
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const Text(
+                        'Add to Bag',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),

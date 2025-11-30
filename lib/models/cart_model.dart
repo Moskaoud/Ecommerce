@@ -27,7 +27,7 @@ class CartModel extends ChangeNotifier {
     );
   }
 
-  void addItem(Product product, String size, String color) {
+  void addItem(Product product, String size, String color, [int quantity = 1]) {
     // Check if item already exists with same size/color
     final index = _items.indexWhere(
       (item) =>
@@ -37,15 +37,36 @@ class CartModel extends ChangeNotifier {
     );
 
     if (index != -1) {
-      _items[index].quantity++;
+      _items[index].quantity += quantity;
     } else {
-      _items.add(CartItem(product: product, size: size, color: color));
+      _items.add(
+        CartItem(
+          product: product,
+          size: size,
+          color: color,
+          quantity: quantity,
+        ),
+      );
     }
     notifyListeners();
   }
 
   void removeItem(CartItem item) {
     _items.remove(item);
+    notifyListeners();
+  }
+
+  void incrementQuantity(CartItem item) {
+    item.quantity++;
+    notifyListeners();
+  }
+
+  void decrementQuantity(CartItem item) {
+    if (item.quantity > 1) {
+      item.quantity--;
+    } else {
+      _items.remove(item);
+    }
     notifyListeners();
   }
 

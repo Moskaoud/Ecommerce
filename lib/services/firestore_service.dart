@@ -39,6 +39,18 @@ class FirestoreService {
         });
   }
 
+  Stream<List<Product>> getProductsByCategory(String category) {
+    return _db
+        .collection('products')
+        .where('category', isEqualTo: category)
+        .snapshots()
+        .map((snapshot) {
+          return snapshot.docs
+              .map((doc) => Product.fromMap(doc.data(), doc.id))
+              .toList();
+        });
+  }
+
   // Categories
   Stream<List<Category>> getCategories() {
     return _db.collection('categories').snapshots().map((snapshot) {

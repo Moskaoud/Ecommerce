@@ -7,6 +7,8 @@ import '../models/category_model.dart';
 import '../widgets/section_header.dart';
 import '../widgets/product_card.dart';
 import '../pages/product_details_page.dart';
+import '../pages/shop_by_categories_page.dart';
+import '../pages/category_products_page.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -49,26 +51,41 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
-                          children: [
-                            CircleAvatar(
-                              radius: 20,
-                              backgroundImage: user?.photoURL != null
-                                  ? NetworkImage(user!.photoURL!)
-                                  : const NetworkImage(
-                                      'https://cdn-icons-png.flaticon.com/512/149/149071.png',
-                                    ), // Generic guest avatar
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              'Hello, ${user?.displayName?.split(' ').first ?? 'Guest'}',
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
+                        CircleAvatar(
+                          radius: 20,
+                          backgroundImage: user?.photoURL != null
+                              ? NetworkImage(user!.photoURL!)
+                              : const NetworkImage(
+                                  'https://cdn-icons-png.flaticon.com/512/149/149071.png',
+                                ), // Generic guest avatar
                         ),
-
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF4F4F4),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: const Row(
+                            children: [
+                              Text(
+                                'Men',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              SizedBox(width: 4),
+                              Icon(
+                                Icons.keyboard_arrow_down,
+                                size: 16,
+                                color: Colors.black,
+                              ),
+                            ],
+                          ),
+                        ),
                         Container(
                           padding: const EdgeInsets.all(10),
                           decoration: const BoxDecoration(
@@ -110,7 +127,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
 
                   // Categories
-                  SectionHeader(title: 'Categories', onSeeAll: () {}),
+                  SectionHeader(
+                    title: 'Categories',
+                    onSeeAll: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ShopByCategoriesPage(),
+                        ),
+                      );
+                    },
+                  ),
                   SizedBox(
                     height: 90,
                     child: StreamBuilder<List<Category>>(
@@ -132,25 +159,37 @@ class _HomeScreenState extends State<HomeScreen> {
                           itemCount: categories.length,
                           itemBuilder: (context, index) {
                             final category = categories[index];
-                            return Padding(
-                              padding: const EdgeInsets.only(right: 16.0),
-                              child: Column(
-                                children: [
-                                  CircleAvatar(
-                                    radius: 30,
-                                    backgroundColor: const Color(0xFFF4F4F4),
-                                    backgroundImage: NetworkImage(
-                                      category.iconUrl,
+                            return GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => CategoryProductsPage(
+                                      category: category,
                                     ),
-                                    onBackgroundImageError: (_, __) =>
-                                        const Icon(Icons.category),
                                   ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    category.title,
-                                    style: const TextStyle(fontSize: 12),
-                                  ),
-                                ],
+                                );
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 16.0),
+                                child: Column(
+                                  children: [
+                                    CircleAvatar(
+                                      radius: 30,
+                                      backgroundColor: const Color(0xFFF4F4F4),
+                                      backgroundImage: NetworkImage(
+                                        category.iconUrl,
+                                      ),
+                                      onBackgroundImageError: (_, __) =>
+                                          const Icon(Icons.category),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      category.title,
+                                      style: const TextStyle(fontSize: 12),
+                                    ),
+                                  ],
+                                ),
                               ),
                             );
                           },

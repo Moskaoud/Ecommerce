@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/product_model.dart';
 import '../models/category_model.dart';
+import '../models/address_model.dart';
 
 class FirestoreService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -45,6 +46,46 @@ class FirestoreService {
           .map((doc) => Category.fromMap(doc.data(), doc.id))
           .toList();
     });
+  }
+
+  // Addresses
+  Stream<List<Address>> getAddresses(String userId) {
+    return _db
+        .collection('users')
+        .doc(userId)
+        .collection('addresses')
+        .snapshots()
+        .map((snapshot) {
+          return snapshot.docs
+              .map((doc) => Address.fromMap(doc.data(), doc.id))
+              .toList();
+        });
+  }
+
+  Future<void> addAddress(String userId, Address address) async {
+    await _db
+        .collection('users')
+        .doc(userId)
+        .collection('addresses')
+        .add(address.toMap());
+  }
+
+  Future<void> updateAddress(String userId, Address address) async {
+    await _db
+        .collection('users')
+        .doc(userId)
+        .collection('addresses')
+        .doc(address.id)
+        .update(address.toMap());
+  }
+
+  Future<void> deleteAddress(String userId, String addressId) async {
+    await _db
+        .collection('users')
+        .doc(userId)
+        .collection('addresses')
+        .doc(addressId)
+        .delete();
   }
 
   // Seed Data (Helper for development)

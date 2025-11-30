@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ecommerce/services/auth_service.dart';
 import 'package:ecommerce/pages/edit_profile_page.dart';
+import 'package:ecommerce/pages/profile/address_page.dart';
+import 'package:ecommerce/pages/profile/payment_page.dart';
+import 'package:ecommerce/pages/profile/wishlist_page.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -151,7 +154,22 @@ class ProfilePage extends StatelessWidget {
           color: Colors.black54,
         ),
         onTap: () {
-          // Placeholder for navigation
+          if (title == 'Address') {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const AddressPage()),
+            );
+          } else if (title == 'Payment') {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const PaymentPage()),
+            );
+          } else if (title == 'Wishlist') {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const WishlistPage()),
+            );
+          }
         },
       ),
     );

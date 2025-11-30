@@ -4,8 +4,14 @@ import '../models/product_model.dart';
 class ProductCard extends StatelessWidget {
   final Product product;
   final VoidCallback? onTap;
+  final bool isFavorite;
 
-  const ProductCard({super.key, required this.product, this.onTap});
+  const ProductCard({
+    super.key,
+    required this.product,
+    this.onTap,
+    this.isFavorite = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -52,10 +58,10 @@ class ProductCard extends StatelessWidget {
                       shape: BoxShape.circle,
                       color: Colors.transparent, // Or white if preferred
                     ),
-                    child: const Icon(
-                      Icons.favorite_border,
+                    child: Icon(
+                      isFavorite ? Icons.favorite : Icons.favorite_border,
                       size: 20,
-                      color: Colors.black,
+                      color: isFavorite ? Colors.red : Colors.black,
                     ),
                   ),
                 ),

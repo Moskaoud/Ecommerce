@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ecommerce/services/firestore_service.dart';
 import 'package:ecommerce/models/product_model.dart';
 import 'package:ecommerce/widgets/product_card.dart';
+import 'package:ecommerce/pages/product_details_page.dart';
 
 class MyFavoritesPage extends StatelessWidget {
   const MyFavoritesPage({super.key});
@@ -51,7 +52,13 @@ class MyFavoritesPage extends StatelessWidget {
                 product: products[index],
                 isFavorite: true,
                 onTap: () {
-                  // Navigate to product details
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          ProductDetailsPage(product: products[index]),
+                    ),
+                  );
                 },
               );
             },

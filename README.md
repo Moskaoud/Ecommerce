@@ -2,6 +2,22 @@
 
 A modern, full-featured e-commerce mobile application built with Flutter and Firebase.
 
+## 📚 Documentation
+
+Comprehensive project documentation is available in the [`/docs`](./docs) directory:
+
+- **[Project Planning](./docs/PROJECT_PLANNING.md)** - Project scope, timeline, risks, and deployment strategy
+- **[Stakeholder Analysis](./docs/STAKEHOLDER_ANALYSIS.md)** - Stakeholder identification and engagement strategies
+- **[Database Design](./docs/DATABASE_DESIGN.md)** - Complete database architecture and schema documentation
+- **[UI/UX Design](./docs/UI_UX_DESIGN.md)** - Design system, components, and user flows
+
+### External Resources
+
+- **Figma Design**: [E-Commerce Mobile App - Community](https://www.figma.com/design/I9kpeKQ5nRIVyMAwLwx6fS/Ecommerce-Mobile-App--Community-)
+- **GitHub Repository**: [Moskaoud/Ecommerce](https://github.com/Moskaoud/Ecommerce)
+- **Documentation Index**: [docs/README.md](./docs/README.md)
+
+
 ## Features
 
 ### 🔐 Authentication
@@ -192,7 +208,7 @@ lib/
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/Moskaoud/Ecommerce.git
    cd ecommerce
    ```
 

@@ -6,6 +6,7 @@ import '../models/product_model.dart';
 import '../models/category_model.dart';
 import '../widgets/section_header.dart';
 import '../widgets/product_card.dart';
+import '../pages/product_details_page.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -55,12 +56,12 @@ class _HomeScreenState extends State<HomeScreen> {
                               backgroundImage: user?.photoURL != null
                                   ? NetworkImage(user!.photoURL!)
                                   : const NetworkImage(
-                                      'https://i.pravatar.cc/150?img=11',
-                                    ), // Placeholder avatar
+                                      'https://cdn-icons-png.flaticon.com/512/149/149071.png',
+                                    ), // Generic guest avatar
                             ),
                             const SizedBox(width: 8),
                             Text(
-                              'Hello, ${user?.displayName?.split(' ').first ?? 'User'}',
+                              'Hello, ${user?.displayName?.split(' ').first ?? 'Guest'}',
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                               ),
@@ -187,7 +188,20 @@ class _HomeScreenState extends State<HomeScreen> {
                               padding: const EdgeInsets.only(right: 16.0),
                               child: SizedBox(
                                 width: 160,
-                                child: ProductCard(product: products[index]),
+                                child: ProductCard(
+                                  product: products[index],
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            ProductDetailsPage(
+                                              product: products[index],
+                                            ),
+                                      ),
+                                    );
+                                  },
+                                ),
                               ),
                             );
                           },
@@ -225,7 +239,20 @@ class _HomeScreenState extends State<HomeScreen> {
                               padding: const EdgeInsets.only(right: 16.0),
                               child: SizedBox(
                                 width: 160,
-                                child: ProductCard(product: products[index]),
+                                child: ProductCard(
+                                  product: products[index],
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            ProductDetailsPage(
+                                              product: products[index],
+                                            ),
+                                      ),
+                                    );
+                                  },
+                                ),
                               ),
                             );
                           },
